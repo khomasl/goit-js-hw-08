@@ -63,3 +63,93 @@ const galleryItems = [
     description: 'Lighthouse Coast Sea',
   },
 ];
+
+const galleryRef = document.querySelector('.js-gallery');
+/// v. 1
+// const makeGalleryItemsMarkup = ({preview, original, description}) => 
+//   `<li class="gallery__item">
+//   <a
+//     class="gallery__link"
+//     href="${original}"
+//   >
+//     <img
+//       class="gallery__image"
+//       src="${preview}"
+//       data-source="${original}"
+//       alt="${description}"
+//     />
+//   </a>
+// </li>`;  
+
+// const  strWithGalleryItemsMarkup = galleryItems
+//   .map(makeGalleryItemsMarkup)
+//   .join('');
+
+// galleryRef.insertAdjacentHTML('afterbegin', strWithGalleryItemsMarkup);
+
+////////////////////////////////////////////////////////////////
+/// v.2
+// // Функция для создания элементов для DOM
+const createElement = (tagName, attributes = {}, children) => {
+  
+  const element = document.createElement(tagName);
+  const attributesEntries = Object.entries(attributes);
+  attributesEntries.forEach(attribute => {
+    const [attributeName, attributeValue] = attribute;
+    element.setAttribute(attributeName, attributeValue);
+  });
+  //console.log('object :>> ',element.tagName);
+  //return element;
+  return children ? element.appendChild(children) : element;
+}
+
+//////////////////////////////////////
+// Создание разметки с помощью createElement
+// const makeGalleryItemsMarkup = ({preview, original, description}) => {
+//   const li = createElement(
+//     'li', 
+//     {class: 'gallery__item'}); 
+//   const a = createElement(
+//       'a', 
+//       {class: 'gallery__link',
+//        href: `${original}`,
+//       }); 
+//   const img = createElement(
+//         'img', 
+//         {class: 'gallery__image',
+//          src: `${preview}`,
+//          "data-source": `${original}`,
+//          alt: `${description}`
+//         })
+
+//   li.appendChild(a.appendChild(img));         
+//   return li; 
+// };
+
+// const arrItemsRef = galleryItems.map(makeGalleryItemsMarkup);
+// galleryRef.append(...arrItemsRef);    
+
+// Создание разметки с помощью createElement
+//   Не працює
+const makeGalleryItemsMarkup = ({preview, original, description}) => 
+  createElement(
+    'li', 
+    {class: 'gallery__item'}, 
+    createElement(
+      'a', 
+      {class: 'gallery__link',
+       href: `${original}`,
+      }, 
+      createElement(
+        'img', 
+        {class: 'gallery__image',
+         src: `${preview}`,
+         "data-source": `${original}`,
+         alt: `${description}`
+        }
+      )
+    )
+  );   
+
+  const arrItemsRef = galleryItems.map(makeGalleryItemsMarkup);
+  galleryRef.append(...arrItemsRef);
