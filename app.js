@@ -65,7 +65,7 @@ const galleryItems = [
 ];
 
 const galleryRef = document.querySelector('.js-gallery');
-/// v. 1
+/// v. 1 через шаблонний рядок
 // const makeGalleryItemsMarkup = ({preview, original, description}) => 
 //   `<li class="gallery__item">
 //   <a
@@ -88,8 +88,8 @@ const galleryRef = document.querySelector('.js-gallery');
 // galleryRef.insertAdjacentHTML('afterbegin', strWithGalleryItemsMarkup);
 
 ////////////////////////////////////////////////////////////////
-/// v.2
-// // Функция для создания элементов для DOM
+/// v.2 через ф-ію для створення елементів для DOM
+// // Функція для створення елементів для DOM
 const createElement = (tagName, attributes = {}, children) => {
   
   const element = document.createElement(tagName);
@@ -129,8 +129,7 @@ const createElement = (tagName, attributes = {}, children) => {
 // const arrItemsRef = galleryItems.map(makeGalleryItemsMarkup);
 // galleryRef.append(...arrItemsRef);    
 
-// Создание разметки с помощью createElement
-//   Не працює
+// Створення цілого піддерева розмітки за допомогою createElement
 const makeGalleryItemsMarkup = ({preview, original, description}) => 
   createElement(
     'li', 
@@ -151,5 +150,26 @@ const makeGalleryItemsMarkup = ({preview, original, description}) =>
     )
   );   
 
-  const arrItemsRef = galleryItems.map(makeGalleryItemsMarkup);
-  galleryRef.append(...arrItemsRef);
+const arrItemsRef = galleryItems.map(makeGalleryItemsMarkup);
+galleryRef.append(...arrItemsRef);
+
+  //modal
+const lightboxRef = document.querySelector('.js-lightbox');
+const imageRef =    document.querySelector('.lightbox__image');
+const btnCloseRef = document.querySelector('button[data-action="close-lightbox"]');
+  
+function attrSrcReplace (e, img) {
+  console.log('img :>> ', img);
+  e.preventDefault();
+  lightboxRef.classList.add('is-open');
+  imageRef.src = img.href;
+}
+
+function onBtnCloseClick () {
+  lightboxRef.classList.remove('is-open');
+}
+const galleryLinksRef = document.querySelectorAll('.gallery__link');
+[...galleryLinksRef].forEach(elem => elem.addEventListener('click', function (e) {
+  attrSrcReplace (e, e.target)}));
+  
+btnCloseRef.addEventListener('click', onBtnCloseClick); 
