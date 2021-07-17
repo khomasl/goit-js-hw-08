@@ -65,7 +65,8 @@ const galleryItems = [
 ];
 
 const galleryRef = document.querySelector('.js-gallery');
-/// v. 1 через шаблонний рядок
+
+// // v. 1 Створення розмітки через шаблонний рядок
 // const makeGalleryItemsMarkup = ({preview, original, description}) => 
 //   `<li class="gallery__item">
 //   <a
@@ -88,88 +89,139 @@ const galleryRef = document.querySelector('.js-gallery');
 // galleryRef.insertAdjacentHTML('afterbegin', strWithGalleryItemsMarkup);
 
 ////////////////////////////////////////////////////////////////
-/// v.2 через ф-ію для створення елементів для DOM
-// // Функція для створення елементів для DOM
-const createElement = (tagName, attributes = {}, children) => {
-  
+/// v.2 Створення розмітки через ф-ію для створення елементів для DOM
+//  Функція для створення елементів для DOM
+////  children - array
+function createElement (tagName, attributes = {}, children = []) {
   const element = document.createElement(tagName);
   const attributesEntries = Object.entries(attributes);
   attributesEntries.forEach(attribute => {
     const [attributeName, attributeValue] = attribute;
     element.setAttribute(attributeName, attributeValue);
   });
-  //console.log('object :>> ',element.tagName);
-  //return element;
-  return children ? element.appendChild(children) : element;
+
+  if (children.length !== 0){
+    element.appendChild(createElement(...children));
+  }
+
+  return element;
+  //return children.length !== 0 ? element.appendChild(createElement(children[0], children[1], children[2])) : element;
 }
-
-//////////////////////////////////////
-// Создание разметки с помощью createElement
-// const makeGalleryItemsMarkup = ({preview, original, description}) => {
-//   const li = createElement(
-//     'li', 
-//     {class: 'gallery__item'}); 
-//   const a = createElement(
-//       'a', 
-//       {class: 'gallery__link',
-//        href: `${original}`,
-//       }); 
-//   const img = createElement(
-//         'img', 
-//         {class: 'gallery__image',
-//          src: `${preview}`,
-//          "data-source": `${original}`,
-//          alt: `${description}`
-//         })
-
-//   li.appendChild(a.appendChild(img));         
-//   return li; 
-// };
-
-// const arrItemsRef = galleryItems.map(makeGalleryItemsMarkup);
-// galleryRef.append(...arrItemsRef);    
 
 // Створення цілого піддерева розмітки за допомогою createElement
 const makeGalleryItemsMarkup = ({preview, original, description}) => 
   createElement(
     'li', 
     {class: 'gallery__item'}, 
-    createElement(
+    [
       'a', 
       {class: 'gallery__link',
        href: `${original}`,
       }, 
-      createElement(
+      [
         'img', 
         {class: 'gallery__image',
          src: `${preview}`,
          "data-source": `${original}`,
          alt: `${description}`
         }
-      )
-    )
+      ]
+    ]
   );   
 
 const arrItemsRef = galleryItems.map(makeGalleryItemsMarkup);
+//console.log('arrItemsRef :>> ', arrItemsRef);
 galleryRef.append(...arrItemsRef);
 
   //modal
-const lightboxRef = document.querySelector('.js-lightbox');
-const imageRef =    document.querySelector('.lightbox__image');
-const btnCloseRef = document.querySelector('button[data-action="close-lightbox"]');
-  
-function attrSrcReplace (e, img) {
-  console.log('img :>> ', img);
-  e.preventDefault();
-  lightboxRef.classList.add('is-open');
-  imageRef.src = img.href;
+const refs = {  
+  lightbox: document.querySelector('.js-lightbox'),
+  image: document.querySelector('.lightbox__image'),
+  closeModalBtn: document.querySelector('button[data-action="close-lightbox"]'),
+  overlay: document.querySelector('.lightbox__overlay'),
+};
+ 
+function setActiveLink(nextActiveLink) {
+  const currentActiveLink = galleryRef.querySelector("a.active");
+
+  if (currentActiveLink) {
+    currentActiveLink.classList.remove("active");
+  }
+
+  nextActiveLink.classList.add("active");
+};
+
+let target;
+let ulRef;
+let elRef;
+let liRef;
+
+function onArrowLeftDown (eKey){
+  if (eKey.code === 'ArrowLeft') {
+    liRef = liRef.previousElementSibling;
+    liRef = liRef !== null ? liRef : ulRef.lastElementChild;
+    const link = liRef.firstElementChild;
+    refs.image.src = link.href;
+    refs.image.alt = link.firstElementChild.alt;
+  }
 }
 
-function onBtnCloseClick () {
-  lightboxRef.classList.remove('is-open');
+function onArrowRightDown (eKey){
+  if (eKey.code === 'ArrowRight') {
+    liRef = liRef.nextElementSibling;
+    liRef = liRef !== null ? liRef : ulRef.firstElementChild;
+    const link = liRef.firstElementChild;
+    refs.image.src = link.href;
+    refs.image.alt = link.firstElementChild.alt;
+  }
 }
-const galleryLinksRef = document.querySelectorAll('.gallery__link');
-[...galleryLinksRef].forEach(elem => elem.addEventListener('click', function (e) {
-  attrSrcReplace (e, e.target)}));
+
+function onKeyEscDown (eKey){
+  if (eKey.code === 'Escape') {
+      onCloseModal();
+  }
+}
+
+function onOpenModal (event) {
+  event.preventDefault();
+  target = event.target;
+  ulRef = event.currentTarget;
+  const aRef = target.parentNode;
+
+  // Перевіряємо тип вузла, якщо не посилання - виходимо з функції -
+  // це попереджає спрацьовування кліка не на фото
+  if (aRef.nodeName !== "A") return;
+
+  setActiveLink(aRef);
+
+  liRef = aRef.parentNode;
   
-btnCloseRef.addEventListener('click', onBtnCloseClick); 
+  refs.lightbox.classList.add('is-open');
+  refs.image.src = aRef.href;
+  refs.image.alt = target.alt;
+  
+  window.addEventListener('keydown', onKeyEscDown);
+  window.addEventListener('keydown', onArrowLeftDown);
+  window.addEventListener('keydown', onArrowRightDown);
+};
+
+function onCloseModal () {
+  window.removeEventListener('keydown', onKeyEscDown);
+  window.removeEventListener('keydown', onArrowLeftDown);
+  window.removeEventListener('keydown', onArrowRightDown);
+
+  refs.lightbox.classList.remove('is-open');
+  refs.image.src = "";//щоб не видно попереднє зображення
+  refs.image.alt = "";
+};
+
+function onOverlayClick (event) {
+  if (event.currentTarget === event.target){
+    onCloseModal();
+  };  
+};
+
+galleryRef.addEventListener('click', onOpenModal);
+refs.closeModalBtn.addEventListener('click', onCloseModal); 
+//refs.overlay.addEventListener('click', onCloseModal); // v. 1
+refs.overlay.addEventListener('click', onOverlayClick); // v. 2
