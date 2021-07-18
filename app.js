@@ -141,47 +141,52 @@ const refs = {
   overlay: document.querySelector('.lightbox__overlay'),
 };
  
-function setActiveLink(nextActiveLink) {
-  const currentActiveLink = galleryRef.querySelector("a.active");
+// function setActiveLink(nextActiveLink) {
+//   const currentActiveLink = galleryRef.querySelector("a.active");
 
-  if (currentActiveLink) {
-    currentActiveLink.classList.remove("active");
-  }
+//   if (currentActiveLink) {
+//     currentActiveLink.classList.remove("active");
+//   }
 
-  nextActiveLink.classList.add("active");
-};
+//   nextActiveLink.classList.add("active");
+// };
 
 let target;
 let ulRef;
 let elRef;
 let liRef;
 
-function onArrowLeftDown (eKey){
-  if (eKey.code === 'ArrowLeft') {
+function onArrowLeftDown (){
     liRef = liRef.previousElementSibling;
     liRef = liRef !== null ? liRef : ulRef.lastElementChild;
     const link = liRef.firstElementChild;
     refs.image.src = link.href;
     refs.image.alt = link.firstElementChild.alt;
-  }
 }
 
-function onArrowRightDown (eKey){
-  if (eKey.code === 'ArrowRight') {
+function onArrowRightDown (){
     liRef = liRef.nextElementSibling;
     liRef = liRef !== null ? liRef : ulRef.firstElementChild;
     const link = liRef.firstElementChild;
     refs.image.src = link.href;
     refs.image.alt = link.firstElementChild.alt;
-  }
 }
 
-function onKeyEscDown (eKey){
-  if (eKey.code === 'Escape') {
+function onKeyDown (eKey){
+  switch (eKey.code){
+    case 'ArrowLeft':
+      onArrowLeftDown();
+      break;
+
+    case 'ArrowRight':
+      onArrowRightDown();
+      break;
+    
+    case 'Escape':
       onCloseModal();
+      break;  
   }
 }
-
 function onOpenModal (event) {
   event.preventDefault();
   target = event.target;
@@ -190,9 +195,9 @@ function onOpenModal (event) {
 
   // Перевіряємо тип вузла, якщо не посилання - виходимо з функції -
   // це попереджає спрацьовування кліка не на фото
-  if (aRef.nodeName !== "A") return;
+   if (aRef.nodeName !== "A") return;
 
-  setActiveLink(aRef);
+  // setActiveLink(aRef);
 
   liRef = aRef.parentNode;
   
@@ -200,15 +205,17 @@ function onOpenModal (event) {
   refs.image.src = aRef.href;
   refs.image.alt = target.alt;
   
-  window.addEventListener('keydown', onKeyEscDown);
-  window.addEventListener('keydown', onArrowLeftDown);
-  window.addEventListener('keydown', onArrowRightDown);
+  window.addEventListener('keydown', onKeyDown);
+  // window.addEventListener('keydown', onKeyEscDown);
+  // window.addEventListener('keydown', onArrowLeftDown);
+  // window.addEventListener('keydown', onArrowRightDown);
 };
 
 function onCloseModal () {
-  window.removeEventListener('keydown', onKeyEscDown);
-  window.removeEventListener('keydown', onArrowLeftDown);
-  window.removeEventListener('keydown', onArrowRightDown);
+  window.addEventListener('keydown', onKeyDown);
+  // window.removeEventListener('keydown', onKeyEscDown);
+  // window.removeEventListener('keydown', onArrowLeftDown);
+  // window.removeEventListener('keydown', onArrowRightDown);
 
   refs.lightbox.classList.remove('is-open');
   refs.image.src = "";//щоб не видно попереднє зображення
