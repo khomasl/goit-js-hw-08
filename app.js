@@ -151,10 +151,10 @@ const refs = {
 //   nextActiveLink.classList.add("active");
 // };
 
-let target;
 let ulRef;
-let elRef;
 let liRef;
+let aRef;
+let img;
 
 function onArrowLeftDown (){
     liRef = liRef.previousElementSibling;
@@ -189,9 +189,10 @@ function onKeyDown (eKey){
 }
 function onOpenModal (event) {
   event.preventDefault();
-  target = event.target;
+  img = event.target;
   ulRef = event.currentTarget;
-  const aRef = target.parentNode;
+  //const aRef = img.parentNode;
+  aRef = img.parentNode;
 
   // Перевіряємо тип вузла, якщо не посилання - виходимо з функції -
   // це попереджає спрацьовування кліка не на фото
@@ -203,7 +204,7 @@ function onOpenModal (event) {
   
   refs.lightbox.classList.add('is-open');
   refs.image.src = aRef.href;
-  refs.image.alt = target.alt;
+  refs.image.alt = img.alt;
   
   window.addEventListener('keydown', onKeyDown);
   // window.addEventListener('keydown', onKeyEscDown);
@@ -212,7 +213,7 @@ function onOpenModal (event) {
 };
 
 function onCloseModal () {
-  window.addEventListener('keydown', onKeyDown);
+  window.removeEventListener('keydown', onKeyDown);
   // window.removeEventListener('keydown', onKeyEscDown);
   // window.removeEventListener('keydown', onArrowLeftDown);
   // window.removeEventListener('keydown', onArrowRightDown);
