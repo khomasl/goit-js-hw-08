@@ -92,16 +92,17 @@ const galleryRef = document.querySelector('.js-gallery');
 /// v.2 Створення розмітки через ф-ію для створення елементів для DOM
 //  Функція для створення елементів для DOM
 ////  children - array
-function createElement (tagName, attributes = {}, children = []) {
+function createElement (tagName, attributes = {}, textContent = "", children = []) {
   const element = document.createElement(tagName);
   const attributesEntries = Object.entries(attributes);
   attributesEntries.forEach(attribute => {
     const [attributeName, attributeValue] = attribute;
     element.setAttribute(attributeName, attributeValue);
   });
+  element.textContent = textContent;
 
   if (children.length !== 0){
-    element.appendChild(createElement(...children));
+    children.map(child => element.appendChild(createElement(...child)));
   }
 
   return element;
@@ -112,19 +113,21 @@ function createElement (tagName, attributes = {}, children = []) {
 const makeGalleryItemsMarkup = ({preview, original, description}) => 
   createElement(
     'li', 
-    {class: 'gallery__item'}, 
-    [
-      'a', 
-      {class: 'gallery__link',
-       href: `${original}`,
-      }, 
-      [
-        'img', 
-        {class: 'gallery__image',
-         src: `${preview}`,
-         "data-source": `${original}`,
-         alt: `${description}`
-        }
+    {class: 'gallery__item'},
+    '',
+    [['a', 
+       {class: 'gallery__link',
+        href: `${original}`,
+       }, 
+       '',
+       [['img', 
+         {class: 'gallery__image',
+          src: `${preview}`,
+          "data-source": `${original}`,
+          alt: `${description}`
+         }
+        ]
+       ]  
       ]
     ]
   );   
@@ -312,9 +315,11 @@ function onCloseModal () {
 };
 
 function onOverlayClick (event) {
-  if (event.currentTarget === event.target){
-    onCloseModal();
-  };  
+  event.stopPropagation();
+  onCloseModal();
+  // if (event.currentTarget === event.target){
+  //   onCloseModal();
+  // };  
 };
 
 galleryRef.addEventListener('click', onOpenModal);
