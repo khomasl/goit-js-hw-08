@@ -64,23 +64,29 @@ const galleryItems = [
   },
 ];
 
+let tabInd = 0;
+let galleryItemsLength = galleryItems.length;
+
 const galleryRef = document.querySelector('.js-gallery');
 
 // // v. 1 Створення розмітки через шаблонний рядок
-// const makeGalleryItemsMarkup = ({preview, original, description}) => 
-//   `<li class="gallery__item">
+// const makeGalleryItemsMarkup = ({preview, original, description}) => {
+//  tabInd += 1;
+//  return `<li class="gallery__item">
 //   <a
 //     class="gallery__link"
 //     href="${original}"
 //   >
 //     <img
-//       class="gallery__image"
-//       src="${preview}"
-//       data-source="${original}"
-//       alt="${description}"
+//       class="gallery__image" 
+//       src="${preview}" 
+//       data-source="${original}" 
+//       alt="${description}" 
+//       tabIndex: "${tabInd}"
 //     />
 //   </a>
-// </li>`;  
+// </li>`;
+//}  
 
 // const  strWithGalleryItemsMarkup = galleryItems
 //   .map(makeGalleryItemsMarkup)
@@ -110,8 +116,9 @@ function createElement (tagName, attributes = {}, textContent = "", children = [
 }
 
 // Створення цілого піддерева розмітки за допомогою createElement
-const makeGalleryItemsMarkup = ({preview, original, description}) => 
-  createElement(
+const makeGalleryItemsMarkup = ({preview, original, description}) => {
+  tabInd += 1;
+  return createElement(
     'li', 
     {class: 'gallery__item'},
     '',
@@ -124,14 +131,15 @@ const makeGalleryItemsMarkup = ({preview, original, description}) =>
          {class: 'gallery__image',
           src: `${preview}`,
           "data-source": `${original}`,
-          alt: `${description}`
+          alt: `${description}`,
+          tabIndex: `${tabInd}`
          }
         ]
        ]  
       ]
     ]
   );   
-
+}
 const arrItemsRef = galleryItems.map(makeGalleryItemsMarkup);
 //console.log('arrItemsRef :>> ', arrItemsRef);
 galleryRef.append(...arrItemsRef);
@@ -236,6 +244,102 @@ galleryRef.append(...arrItemsRef);
 ////////////////////////////////////////////////////
 
 //modal v. 2 через setActiveLink(nextActiveLink)
+// const refs = {  
+//   lightbox: document.querySelector('.js-lightbox'),
+//   image: document.querySelector('.lightbox__image'),
+//   closeModalBtn: document.querySelector('button[data-action="close-lightbox"]'),
+//   overlay: document.querySelector('.lightbox__overlay'),
+// };
+ 
+// function setActiveLink(nextActiveLink) {
+//   const currentActiveLink = galleryRef.querySelector("a.active");
+
+//   if (currentActiveLink) {
+//     currentActiveLink.classList.remove("active");
+//   }
+
+//   nextActiveLink.classList.add("active");
+// };
+
+// function setImage (aRef){
+//   setActiveLink(aRef);
+//   refs.image.src = aRef.href;
+//   refs.image.alt = aRef.firstElementChild.alt;
+// }
+
+// function onArrowLeftDown (){
+//   const liRef = galleryRef.querySelector('.active').parentNode;
+//   const ulRef = liRef.parentNode;
+//   const previousLiRef = liRef.previousElementSibling;
+//   const newCurrentLiRef = previousLiRef !== null ? previousLiRef : ulRef.lastElementChild;
+//   setImage(newCurrentLiRef.firstElementChild);
+// }
+
+// function onArrowRightDown (){
+//   const liRef = galleryRef.querySelector('.active').parentNode;
+//   const ulRef = liRef.parentNode;
+//   const nextLiRef = liRef.nextElementSibling;
+//   const newCurrentLiRef = nextLiRef !== null ? nextLiRef : ulRef.firstElementChild;
+//   setImage(newCurrentLiRef.firstElementChild);
+// }
+
+// function onKeyDown (eKey){
+//   switch (eKey.code){
+//     case 'ArrowLeft':
+//       onArrowLeftDown();
+//       break;
+
+//     case 'ArrowRight':
+//       onArrowRightDown();
+//       break;
+    
+//     case 'Escape':
+//       onCloseModal();
+//       break;  
+
+//     default: return;  
+//   }
+// }
+// function onOpenModal (event) {
+//   event.preventDefault();
+//   //const aRef = event.target.parentNode;
+//   const aRef = event.target.closest('.gallery__link');
+//   // Перевіряємо тип вузла, якщо не посилання - виходимо з функції -
+//   // це попереджає спрацьовування кліка не на фото
+//    if (aRef.nodeName !== "A") return;
+
+//   refs.lightbox.classList.add('is-open');
+//   setImage(aRef);
+
+//   window.addEventListener('keydown', onKeyDown);
+// };
+
+// function onCloseModal () {
+//   window.removeEventListener('keydown', onKeyDown);
+
+//   refs.lightbox.classList.remove('is-open');
+//   refs.image.src = "";//щоб не видно попереднє зображення
+//   refs.image.alt = "";
+// };
+
+// function onOverlayClick (event) {
+//   event.stopPropagation();
+//   onCloseModal();
+//   // Аналог
+//   // if (event.currentTarget === event.target){
+//   //   onCloseModal();
+//   // };  
+// };
+
+// galleryRef.addEventListener('click', onOpenModal);
+// refs.closeModalBtn.addEventListener('click', onCloseModal); 
+// //refs.overlay.addEventListener('click', onCloseModal); // v. 1
+// refs.overlay.addEventListener('click', onOverlayClick); // v. 2
+
+////////////////////////////////////
+
+// modal v. 3 через tabIndex - найкращий варіант, бо не залежить від розмітки 
+
 const refs = {  
   lightbox: document.querySelector('.js-lightbox'),
   image: document.querySelector('.lightbox__image'),
@@ -243,36 +347,19 @@ const refs = {
   overlay: document.querySelector('.lightbox__overlay'),
 };
  
-function setActiveLink(nextActiveLink) {
-  const currentActiveLink = galleryRef.querySelector("a.active");
-
-  if (currentActiveLink) {
-    currentActiveLink.classList.remove("active");
-  }
-
-  nextActiveLink.classList.add("active");
-};
-
-function setImage (aRef){
-  setActiveLink(aRef);
-  refs.image.src = aRef.href;
-  refs.image.alt = aRef.firstElementChild.alt;
+function setImage (img){
+  refs.image.src = img.original;
+  refs.image.alt = img.description;
 }
 
 function onArrowLeftDown (){
-  const liRef = galleryRef.querySelector('.active').parentNode;
-  const ulRef = liRef.parentNode;
-  const previousLiRef = liRef.previousElementSibling;
-  const newCurrentLiRef = previousLiRef !== null ? previousLiRef : ulRef.lastElementChild;
-  setImage(newCurrentLiRef.firstElementChild);
+  tabInd = tabInd !== 1 ? tabInd - 1 : galleryItemsLength;
+  setImage(galleryItems[tabInd - 1]);
 }
 
 function onArrowRightDown (){
-  const liRef = galleryRef.querySelector('.active').parentNode;
-  const ulRef = liRef.parentNode;
-  const nextLiRef = liRef.nextElementSibling;
-  const newCurrentLiRef = nextLiRef !== null ? nextLiRef : ulRef.firstElementChild;
-  setImage(newCurrentLiRef.firstElementChild);
+  tabInd = tabInd !== galleryItemsLength ? tabInd + 1 : 1;
+  setImage(galleryItems[tabInd - 1]);
 }
 
 function onKeyDown (eKey){
@@ -294,14 +381,15 @@ function onKeyDown (eKey){
 }
 function onOpenModal (event) {
   event.preventDefault();
-  //const aRef = event.target.parentNode;
+  tabInd = Number(event.target.getAttribute('tabindex'));
   const aRef = event.target.closest('.gallery__link');
   // Перевіряємо тип вузла, якщо не посилання - виходимо з функції -
   // це попереджає спрацьовування кліка не на фото
    if (aRef.nodeName !== "A") return;
 
   refs.lightbox.classList.add('is-open');
-  setImage(aRef);
+  
+  setImage(galleryItems[tabInd-1]);
 
   window.addEventListener('keydown', onKeyDown);
 };
@@ -317,6 +405,7 @@ function onCloseModal () {
 function onOverlayClick (event) {
   event.stopPropagation();
   onCloseModal();
+  // Аналог
   // if (event.currentTarget === event.target){
   //   onCloseModal();
   // };  
