@@ -379,6 +379,7 @@ function onKeyDown (eKey){
     default: return;  
   }
 }
+
 function onOpenModal (event) {
   event.preventDefault();
   tabInd = Number(event.target.getAttribute('tabindex'));
@@ -390,8 +391,11 @@ function onOpenModal (event) {
   refs.lightbox.classList.add('is-open');
   
   setImage(galleryItems[tabInd-1]);
-
+  // Я
   window.addEventListener('keydown', onKeyDown);
+
+  //olga
+  //window.addEventListener('keydown', onClickRightOrLeft);
 };
 
 function onCloseModal () {
@@ -411,7 +415,8 @@ function onOverlayClick (event) {
   // };  
 };
 
-galleryRef.addEventListener('click', onOpenModal);
-refs.closeModalBtn.addEventListener('click', onCloseModal); 
+ galleryRef.addEventListener('click', onOpenModal);
+ refs.closeModalBtn.addEventListener('click', onCloseModal); 
 //refs.overlay.addEventListener('click', onCloseModal); // v. 1
-refs.overlay.addEventListener('click', onOverlayClick); // v. 2
+ refs.overlay.addEventListener('click', onOverlayClick); // v. 2
+
