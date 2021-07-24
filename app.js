@@ -78,15 +78,15 @@ const galleryRef = document.querySelector('.js-gallery');
 //     href="${original}"
 //   >
 //     <img
-//       class="gallery__image" 
-//       src="${preview}" 
-//       data-source="${original}" 
-//       alt="${description}" 
+//       class="gallery__image"
+//       src="${preview}"
+//       data-source="${original}"
+//       alt="${description}"
 //       tabIndex: "${tabInd}"
 //     />
 //   </a>
 // </li>`;
-//}  
+//}
 
 // const  strWithGalleryItemsMarkup = galleryItems
 //   .map(makeGalleryItemsMarkup)
@@ -119,15 +119,15 @@ function createElement (tagName, attributes = {}, textContent = "", children = [
 const makeGalleryItemsMarkup = ({preview, original, description}) => {
   tabInd += 1;
   return createElement(
-    'li', 
+    'li',
     {class: 'gallery__item'},
     '',
-    [['a', 
+    [['a',
        {class: 'gallery__link',
         href: `${original}`,
-       }, 
+       },
        '',
-       [['img', 
+       [['img',
          {class: 'gallery__image',
           src: `${preview}`,
           "data-source": `${original}`,
@@ -135,23 +135,23 @@ const makeGalleryItemsMarkup = ({preview, original, description}) => {
           tabIndex: `${tabInd}`
          }
         ]
-       ]  
+       ]
       ]
     ]
-  );   
+  );
 }
 const arrItemsRef = galleryItems.map(makeGalleryItemsMarkup);
 //console.log('arrItemsRef :>> ', arrItemsRef);
 galleryRef.append(...arrItemsRef);
 
 //   //modal v. 1 через глобальні змінні
-// const refs = {  
+// const refs = {
 //   lightbox: document.querySelector('.js-lightbox'),
 //   image: document.querySelector('.lightbox__image'),
 //   closeModalBtn: document.querySelector('button[data-action="close-lightbox"]'),
 //   overlay: document.querySelector('.lightbox__overlay'),
 // };
- 
+
 // function setActiveLink(nextActiveLink) {
 //   const currentActiveLink = galleryRef.querySelector("a.active");
 
@@ -194,10 +194,10 @@ galleryRef.append(...arrItemsRef);
 //     case 'ArrowRight':
 //       onArrowRightDown();
 //       break;
-    
+
 //     case 'Escape':
 //       onCloseModal();
-//       break;  
+//       break;
 //   }
 // }
 // function onOpenModal (event) {
@@ -212,13 +212,13 @@ galleryRef.append(...arrItemsRef);
 //    if (aRef.nodeName !== "A") return;
 
 //  // setActiveLink(aRef);
-  
+
 //   liRef = aRef.parentNode;
-  
+
 //   refs.lightbox.classList.add('is-open');
 //   refs.image.src = aRef.href;
 //   refs.image.alt = img.alt;
-  
+
 //   window.addEventListener('keydown', onKeyDown);
 // };
 
@@ -233,24 +233,24 @@ galleryRef.append(...arrItemsRef);
 // function onOverlayClick (event) {
 //   if (event.currentTarget === event.target){
 //     onCloseModal();
-//   };  
+//   };
 // };
 
 // galleryRef.addEventListener('click', onOpenModal);
-// refs.closeModalBtn.addEventListener('click', onCloseModal); 
+// refs.closeModalBtn.addEventListener('click', onCloseModal);
 // //refs.overlay.addEventListener('click', onCloseModal); // v. 1
 // refs.overlay.addEventListener('click', onOverlayClick); // v. 2
 
 ////////////////////////////////////////////////////
 
 //modal v. 2 через setActiveLink(nextActiveLink)
-// const refs = {  
+// const refs = {
 //   lightbox: document.querySelector('.js-lightbox'),
 //   image: document.querySelector('.lightbox__image'),
 //   closeModalBtn: document.querySelector('button[data-action="close-lightbox"]'),
 //   overlay: document.querySelector('.lightbox__overlay'),
 // };
- 
+
 // function setActiveLink(nextActiveLink) {
 //   const currentActiveLink = galleryRef.querySelector("a.active");
 
@@ -292,12 +292,12 @@ galleryRef.append(...arrItemsRef);
 //     case 'ArrowRight':
 //       onArrowRightDown();
 //       break;
-    
+
 //     case 'Escape':
 //       onCloseModal();
-//       break;  
+//       break;
 
-//     default: return;  
+//     default: return;
 //   }
 // }
 // function onOpenModal (event) {
@@ -328,25 +328,25 @@ galleryRef.append(...arrItemsRef);
 //   // Аналог
 //   // if (event.currentTarget === event.target){
 //   //   onCloseModal();
-//   // };  
+//   // };
 // };
 
 // galleryRef.addEventListener('click', onOpenModal);
-// refs.closeModalBtn.addEventListener('click', onCloseModal); 
+// refs.closeModalBtn.addEventListener('click', onCloseModal);
 // //refs.overlay.addEventListener('click', onCloseModal); // v. 1
 // refs.overlay.addEventListener('click', onOverlayClick); // v. 2
 
 ////////////////////////////////////
 
-// modal v. 3 через tabIndex - найкращий варіант, бо не залежить від розмітки 
+// modal v. 3 через tabIndex - найкращий варіант, бо не залежить від розмітки
 
-const refs = {  
+const refs = {
   lightbox: document.querySelector('.js-lightbox'),
   image: document.querySelector('.lightbox__image'),
   closeModalBtn: document.querySelector('button[data-action="close-lightbox"]'),
   overlay: document.querySelector('.lightbox__overlay'),
 };
- 
+
 function setImage (img){
   refs.image.src = img.original;
   refs.image.alt = img.description;
@@ -371,12 +371,12 @@ function onKeyDown (eKey){
     case 'ArrowRight':
       onArrowRightDown();
       break;
-    
+
     case 'Escape':
       onCloseModal();
-      break;  
+      break;
 
-    default: return;  
+    default: return;
   }
 }
 
@@ -389,7 +389,7 @@ function onOpenModal (event) {
    if (aRef.nodeName !== "A") return;
 
   refs.lightbox.classList.add('is-open');
-  
+
   setImage(galleryItems[tabInd-1]);
   // Я
   window.addEventListener('keydown', onKeyDown);
@@ -412,11 +412,11 @@ function onOverlayClick (event) {
   // Аналог
   // if (event.currentTarget === event.target){
   //   onCloseModal();
-  // };  
+  // };
 };
 
  galleryRef.addEventListener('click', onOpenModal);
- refs.closeModalBtn.addEventListener('click', onCloseModal); 
+ refs.closeModalBtn.addEventListener('click', onCloseModal);
 //refs.overlay.addEventListener('click', onCloseModal); // v. 1
  refs.overlay.addEventListener('click', onOverlayClick); // v. 2
 
